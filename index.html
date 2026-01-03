@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Gym | Captain Rehab Adel V17</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap');
+        :root {
+            --p-gold: #d4af37; --p-navy: #0a0e17; --p-glass: rgba(255, 255, 255, 0.05); 
+            --p-border: rgba(255, 255, 255, 0.1); --p-danger: #ff4d4d; --p-success: #00ff88;
+            --p-diamond: #b9f2ff; --p-warning: #f1c40f;
+        }
+        body { font-family: 'Cairo', sans-serif; background: var(--p-navy); color: #fff; margin: 0; overflow-x: hidden; }
+        header { padding: 15px 5%; background: rgba(10, 14, 23, 0.95); border-bottom: 2px solid var(--p-gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; }
+        .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
+        .p-card { background: var(--p-glass); border: 1px solid var(--p-border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .p-input { background: rgba(255,255,255,0.05); border: 1px solid var(--p-border); padding: 12px; border-radius: 12px; color: white; width: 100%; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
+        .p-btn { background: var(--p-gold); color: #000; border: none; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+        .p-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        
+        .diet-box { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--p-gold); border-radius: 15px; padding: 15px; margin-top: 15px; }
+        .diet-tag { background: var(--p-gold); color: #000; padding: 2px 10px; border-radius: 5px; font-weight: bold; font-size: 0.8rem; }
+        .diet-list { list-style: none; padding: 0; margin-top: 10px; }
+        .diet-list li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .diet-list li b { color: var(--p-gold); }
+
+        .measure-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 15px; align-items: center; }
+        .measure-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 15px; border: 1px solid var(--p-gold); }
+        .measure-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        
+        .chat-area { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; }
+        .msg.cap { background: var(--p-gold); color: #000; align-self: flex-start; }
+        .msg.user { background: rgba(255,255,255,0.1); align-self: flex-end; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        td, th { padding: 12px; background: rgba(255,255,255,0.02); text-align: center; border-radius: 10px; }
+        
+        #loginPage { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b, #0a0e17); }
+        .login-box { background: rgba(255,255,255,0.02); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; width: 380px; border: 1px solid var(--p-border); text-align: center; }
+        
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:200; justify-content:center; align-items:center; }
+        .modal-content { background:var(--p-navy); width:95%; max-width:750px; padding:25px; border-radius:25px; border:1px solid var(--p-gold); max-height: 95vh; overflow-y: auto; }
+        .status-frozen { color: var(--p-danger); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-box" id="loginForm">
+            <h2 style="color: var(--p-gold);">POWER GYM</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="p-btn" id="btnUserMode" onclick="setMode('user')">دخول البطلة</button>
+                <button class="p-btn" id="btnAdminMode" style="background:#333; color:#fff" onclick="setMode('admin')">الكابتن</button>
+            </div>
+            <input type="text" id="uInp" class="p-input" placeholder="اسم المستخدم">
+            <input type="password" id="pInp" class="p-input" placeholder="كلمة المرور">
+            <button class="p-btn" onclick="core.login()">دخول المنصة</button>
+            <p id="regArea" style="margin-top:15px; font-size:0.8rem">بطلة جديدة؟ <a href="#" onclick="toggleAuth('reg')" style="color:var(--p-gold)">أنشئي حسابك</a></p>
+        </div>
+
+        <div class="login-box" id="registerForm" style="display:none">
+            <h2 style="color: var(--p-gold);">تسجيل بطلة جديدة</h2>
+            <input type="text" id="rName" class="p-input" placeholder="الاسم الكامل">
+            <input type="text" id="rUser" class="p-input" placeholder="اسم مستخدم (انجليزي)">
+            <input type="password" id="rPass" class="p-input" placeholder="كلمة مرور">
+            <input type="tel" id="rPhone" class="p-input" placeholder="رقم الواتساب">
+            <select id="rGoal" class="p-input">
+                <option value="تخسيس">تخسيس وحرق دهون</option>
+                <option value="زيادة وزن">زيادة وزن وعضلات</option>
+                <option value="تأهيل">تأهيل وإصابات</option>
+            </select>
+            <button class="p-btn" onclick="user.register()">تأكيد التسجيل</button>
+            <p style="margin-top:15px"><a href="#" onclick="toggleAuth('login')" style="color:#aaa">العودة للدخول</a></p>
+        </div>
+    </div>
+
+    <div id="mainApp" style="display: none;">
+        <header>
+            <span id="navUserName" style="font-weight: 900; color:var(--p-gold)"></span>
+            <button onclick="location.reload()" class="p-btn" style="width:auto; background:var(--p-danger); color:white; padding:5px 15px;">خروج</button>
+        </header>
+
+        <div class="container">
+            <div id="adminPanel" style="display: none;">
+                <div class="p-card">
+                    <h3>إدارة البطلات</h3>
+                    <table>
+                        <thead><tr><th>البطلة</th><th>الحالة</th><th>الهدف</th><th>الشات</th><th>إدارة</th></tr></thead>
+                        <tbody id="adminTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="userPanel" style="display: none;">
+                <div id="frozenAcc" class="p-card" style="display:none; text-align:center; border-color:var(--p-danger)">
+                    <h2 style="color:var(--p-danger)">الحساب مجمد!</h2>
+                    <p>عذراً بطلتنا، برجاء التواصل مع الكابتن لتجديد اشتراكك.</p>
+                </div>
+                
+                <div id="activeAcc">
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+                        <div>
+                            <div class="p-card">
+                                <div style="text-align:center; margin-bottom:15px">
+                                    <span style="color:#aaa">احتياجك اليومي من السعرات</span>
+                                    <div id="uCalDisplay" style="font-size:3rem; color:var(--p-success); font-weight:900">0</div>
+                                </div>
+                                <h3 style="color:var(--p-gold)"><i class="fas fa-utensils"></i> الجدول الغذائي</h3>
+                                <div id="dietDisplay" class="diet-box"></div>
+                            </div>
+                            
+                            <div class="p-card">
+                                <h3 style="color:var(--p-gold)"><i class="fas fa-ruler-combined"></i> تحديث مقاساتي</h3>
+                                <div class="measure-grid">
+                                    <img src="https://d.top4top.io/p_3653sbemj0.png" class="measure-img">
+                                    <div class="measure-inputs">
+                                        <input type="number" id="m_w" class="p-input" placeholder="الوزن">
+                                        <input type="number" id="m_ch" class="p-input" placeholder="الصدر">
+                                        <input type="number" id="m_wa" class="p-input" placeholder="الخصر">
+                                        <input type="number" id="m_hi" class="p-input" placeholder="الأرداف">
+                                        <input type="number" id="m_ar" class="p-input" placeholder="الذراع">
+                                        <input type="number" id="m_th" class="p-input" placeholder="الفخذ">
+                                        <input type="number" id="m_ne" class="p-input" placeholder="الرقبة">
+                                        <button class="p-btn" onclick="user.saveMeasures()">حفظ + 10 نقاط</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="p-card" style="text-align:center">
+                                <h2 id="uPointsDisplay" style="color:var(--p-gold); margin:0; font-size:3rem">0</h2><small>نقطة ولاء 🏆</small>
+                            </div>
+                            <div class="p-card">
+                                <h3>شات الكابتن</h3>
+                                <div id="userChatBox" class="chat-area"></div>
+                                <div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="userMsg" class="p-input" style="margin:0"><button class="p-btn" style="width:60px" onclick="user.send()"><i class="fas fa-paper-plane"></i></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminChatModal" class="modal"><div class="modal-content"><div id="adminChatBox" class="chat-area"></div><div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="adminMsgInp" class="p-input" style="margin:0"><button class="p-btn" style="width:70px" onclick="admin.sendReply()">رد</button><button class="p-btn" style="width:50px; background:var(--p-danger)" onclick="closeModal('adminChatModal')">X</button></div></div></div>
+    
+    <div id="adminEditModal" class="modal"><div class="modal-content">
+        <h3>تحديث بيانات البطلة</h3>
+        <input type="text" id="edName" class="p-input">
+        <input type="number" id="edCal" class="p-input" placeholder="حدد السعرات">
+        <select id="edGoal" class="p-input"><option value="تخسيس">تخسيس</option><option value="زيادة وزن">زيادة وزن</option><option value="تأهيل">تأهيل</option></select>
+        <button class="p-btn" onclick="admin.saveEdit()">حفظ</button>
+        <button class="p-btn" style="background:#444; margin-top:10px" onclick="closeModal('adminEditModal')">إغلاق</button>
+    </div></div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC8qS1LqY3Q2P2LmcvM-M3lW9pNBP3o0JU",
+        authDomain: "power-gym-c0a65.firebaseapp.com",
+        projectId: "power-gym-c0a65",
+        storageBucket: "power-gym-c0a65.firebasestorage.app",
+        messagingSenderId: "781355588548",
+        appId: "1:781355588548:web:0b110ef5b7055731972291",
+        databaseURL: "https://power-gym-c0a65-default-rtdb.firebaseio.com/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.mode = 'user';
+    window.setMode = (m) => { 
+        window.mode = m; 
+        document.getElementById('btnUserMode').style.background = m === 'user' ? '#d4af37' : '#333'; 
+        document.getElementById('btnAdminMode').style.background = m === 'admin' ? '#d4af37' : '#333'; 
+        document.getElementById('regArea').style.display = m === 'admin' ? 'none' : 'block';
+    };
+    window.toggleAuth = (t) => {
+        document.getElementById('loginForm').style.display = t === 'login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = t === 'reg' ? 'block' : 'none';
+    };
+    window.closeModal = (id) => document.getElementById(id).style.display='none';
+
+    window.core = {
+        activeId: null,
+        login: async function() {
+            const u = document.getElementById('uInp').value, p = document.getElementById('pInp').value;
+            if(window.mode === 'admin' && p === 'cap123') this.showUI('admin', {name:'الكابتن رحاب'});
+            else {
+                const snap = await get(ref(db, 'members'));
+                const m = Object.values(snap.val()||{}).find(x => x.user === u && x.pass === p);
+                if(m) { this.activeId = m.id; this.showUI('user', m); } else alert('بيانات خاطئة');
+            }
+        },
+        showUI: function(role, data) {
+            document.getElementById('loginPage').style.display='none';
+            document.getElementById('mainApp').style.display='block';
+            document.getElementById('navUserName').innerText = data.name;
+            if(role === 'admin') { document.getElementById('adminPanel').style.display='block'; admin.listen(); }
+            else { document.getElementById('userPanel').style.display='block'; user.listen(); }
+        }
+    };
+
+    window.admin = {
+        listen: function() {
+            onValue(ref(db, 'members'), (snap) => {
+                const tbody = document.getElementById('adminTable'); tbody.innerHTML = '';
+                Object.values(snap.val()||{}).forEach(m => {
+                    tbody.innerHTML += `<tr>
+                        <td>${m.name}</td>
+                        <td class="${m.status === 'frozen' ? 'status-frozen' : ''}">${m.status === 'active' ? 'نشط' : 'مجمد'}</td>
+                        <td>${m.goal}</td>
+                        <td><button class="p-btn" style="padding:4px; background:${m.unread?'var(--p-danger)':'#0088ff'}" onclick="admin.openChat('${m.id}')">💬</button></td>
+                        <td>
+                            <i class="fas fa-edit" onclick="admin.edit('${m.id}')" style="color:var(--p-gold); cursor:pointer"></i> | 
+                            <i class="fas fa-snowflake" onclick="admin.toggleStatus('${m.id}','${m.status}')" style="color:var(--p-warning); cursor:pointer"></i> |
+                            <i class="fas fa-trash" onclick="admin.del('${m.id}')" style="color:var(--p-danger); cursor:pointer"></i>
+                        </td>
+                    </tr>`;
+                });
+            });
+        },
+        toggleStatus: (id, s) => update(ref(db, 'members/'+id), {status: s === 'active' ? 'frozen' : 'active'}),
+        del: (id) => confirm('حذف نهائي؟') && remove(ref(db, 'members/'+id)),
+        edit: async (id) => {
+            core.activeId = id; const s = await get(ref(db, 'members/'+id)); const m = s.val();
+            document.getElementById('edName').value = m.name; document.getElementById('edCal').value = m.calories;
+            document.getElementById('adminEditModal').style.display='flex';
+        },
+        saveEdit: () => {
+            update(ref(db, 'members/'+core.activeId), {
+                name: document.getElementById('edName').value,
+                calories: document.getElementById('edCal').value,
+                goal: document.getElementById('edGoal').value
+            });
+            closeModal('adminEditModal');
+        },
+        openChat: (id) => {
+            core.activeId = id; update(ref(db, 'members/'+id), {unread: false});
+            document.getElementById('adminChatModal').style.display='flex';
+            onValue(ref(db, `members/${id}/chat`), (s) => {
+                document.getElementById('adminChatBox').innerHTML = (s.val() || []).map(msg=>`<div class="msg ${msg.s}">${msg.t}</div>`).join('');
+            });
+        },
+        sendReply: async () => {
+            const inp = document.getElementById('adminMsgInp'); if(!inp.value) return;
+            const s = await get(ref(db, `members/${core.activeId}/chat`)); const c = s.val() || [];
+            c.push({s:'cap', t:inp.value});
+            await update(ref(db, `members/${core.activeId}`), {chat: c}); inp.value = '';
+        }
+    };
+
+    window.user = {
+        register: async function() {
+            const name = document.getElementById('rName').value, user = document.getElementById('rUser').value,
+                  pass = document.getElementById('rPass').value, phone = document.getElementById('rPhone').value, goal = document.getElementById('rGoal').value;
+            if(!name || !user) return alert('أكملي البيانات');
+            const id = Date.now().toString();
+            await set(ref(db, 'members/'+id), { id, name, user, pass, phone, goal, status:'active', points:0, calories:0, chat:[{s:'cap', t:'أهلاً بكِ بطلتنا'}], measures:[] });
+            alert('تم التسجيل بنجاح!'); toggleAuth('login');
+        },
+        listen: function() {
+            onValue(ref(db, 'members/'+core.activeId), (snap) => {
+                const m = snap.val(); if(!m) return;
+                if(m.status === 'frozen') {
+                    document.getElementById('activeAcc').style.display='none';
+                    document.getElementById('frozenAcc').style.display='block';
+                } else {
+                    document.getElementById('activeAcc').style.display='block';
+                    document.getElementById('frozenAcc').style.display='none';
+                    document.getElementById('uPointsDisplay').innerText = m.points || 0;
+                    document.getElementById('uCalDisplay').innerText = m.calories || 'بانتظار الكابتن';
+                    
+                    let d = "";
+                    if(m.goal === 'تخسيس') d = `<span class="diet-tag">نظام الحرق</span><ul class="diet-list"><li><b>الإفطار:</b> بيض مسلوق + خضار + جبن قريش.</li><li><b>الغداء:</b> 150ج بروتين + سلطة + 4 ملاعق أرز.</li><li><b>سناك:</b> ثمرة فاكهة أو حفنة مكسرات.</li><li><b>العشاء:</b> زبادي بالليمون أو علبة تونة.</li></ul>`;
+                    else if(m.goal === 'زيادة وزن') d = `<span class="diet-tag">نظام الضخامة</span><ul class="diet-list"><li><b>الإفطار:</b> شوفان بالحليب + عسل + موز.</li><li><b>الغداء:</b> 200ج بروتين + أرز أو مكرونة + خضار.</li><li><b>سناك:</b> زبدة فول سوداني + توست.</li><li><b>العشاء:</b> بطاطس مهروسة + جبن + بيض.</li></ul>`;
+                    else d = `<span class="diet-tag">نظام التأهيل</span><ul class="diet-list"><li><b>التركيز:</b> أطعمة غنية بالأوميجا 3 ومضادات الالتهاب.</li></ul>`;
+                    document.getElementById('dietDisplay').innerHTML = d;
+                    document.getElementById('userChatBox').innerHTML = (m.chat || []).map(msg=>`<div class="msg ${msg.s}">${msg.t}</div>`).join('');
+                }
+            });
+        },
+        saveMeasures: async function() {
+            const s = await get(ref(db, 'members/'+core.activeId)); const m = s.val();
+            const ms = m.measures || [];
+            ms.push({ 
+                w: document.getElementById('m_w').value, ch: document.getElementById('m_ch').value, 
+                wa: document.getElementById('m_wa').value, hi: document.getElementById('m_hi').value,
+                ar: document.getElementById('m_ar').value, th: document.getElementById('m_th').value,
+                ne: document.getElementById('m_ne').value, date: new Date().toLocaleDateString()
+            });
+            await update(ref(db, 'members/'+core.activeId), {measures: ms, points: (m.points || 0) + 10});
+            alert('تم حفظ مقاساتك وإضافة 10 نقاط! 🏆');
+        },
+        send: async function() {
+            const inp = document.getElementById('userMsg'); if(!inp.value) return;
+            const s = await get(ref(db, `members/${core.activeId}/chat`)); const c = s.val() || [];
+            c.push({s:'user', t:inp.value});
+            await update(ref(db, 'members/'+core.activeId), {chat: c, unread: true});
+            inp.value = '';
+        }
+    };
+</script>
+</body>
+</html>
