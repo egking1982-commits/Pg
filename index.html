@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Gym | Captain Rehab Adel V15 Pro</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d4af37">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap');
+        :root {
+            --p-gold: #d4af37; --p-navy: #0a0e17; --p-glass: rgba(255, 255, 255, 0.05); 
+            --p-border: rgba(255, 255, 255, 0.1); --p-danger: #ff4d4d; --p-success: #00ff88;
+            --p-diamond: #b9f2ff;
+        }
+        body { font-family: 'Cairo', sans-serif; background: var(--p-navy); color: #fff; margin: 0; overflow-x: hidden; }
+        header { padding: 15px 5%; background: rgba(10, 14, 23, 0.95); border-bottom: 2px solid var(--p-gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index:100; }
+        .container { max-width: 1300px; margin: 20px auto; padding: 0 20px; }
+        .p-card { background: var(--p-glass); border: 1px solid var(--p-border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .p-input { background: rgba(255,255,255,0.05); border: 1px solid var(--p-border); padding: 12px; border-radius: 12px; color: white; width: 100%; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
+        .p-btn { background: var(--p-gold); color: #000; border: none; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+        .p-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        
+        .wa-btn { background: #25d366 !important; color: white !important; padding: 5px 10px; border-radius: 8px; cursor: pointer; border: none; transition: 0.3s; }
+        .wa-btn:hover { transform: scale(1.1); background: #1eb954 !important; }
+
+        .diet-box { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--p-gold); border-radius: 15px; padding: 15px; margin-top: 15px; }
+        .diet-tag { background: var(--p-gold); color: #000; padding: 2px 10px; border-radius: 5px; font-weight: bold; font-size: 0.8rem; }
+        .diet-list { list-style: none; padding: 0; margin-top: 10px; }
+        .diet-list li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .diet-list li b { color: var(--p-gold); }
+        .calories-badge { background: #1a1a1a; border: 1px dashed var(--p-gold); padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
+
+        .rank-badge { padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; display: inline-block; margin-bottom: 10px; }
+        .rank-diamond { background: var(--p-diamond); color: #000; box-shadow: 0 0 10px var(--p-diamond); }
+
+        .measure-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 15px; align-items: center; }
+        .measure-img { width: 100%; max-height: 450px; object-fit: contain; border-radius: 15px; border: 1px solid var(--p-gold); }
+        .measure-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        
+        .chat-area { height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; }
+        .msg.cap { background: var(--p-gold); color: #000; align-self: flex-start; }
+        .msg.user { background: rgba(255,255,255,0.1); align-self: flex-end; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        td, th { padding: 12px; background: rgba(255,255,255,0.02); text-align: center; border-radius: 10px; }
+        
+        #loginPage { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1e293b, #0a0e17); }
+        .login-box { background: rgba(255,255,255,0.02); backdrop-filter: blur(20px); padding: 30px; border-radius: 30px; width: 380px; border: 1px solid var(--p-border); text-align: center; }
+        
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:200; justify-content:center; align-items:center; }
+        .modal-content { background:var(--p-navy); width:95%; max-width:750px; padding:25px; border-radius:25px; border:1px solid var(--p-gold); max-height: 95vh; overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-box">
+            <h2 style="color: var(--p-gold);">POWER GYM</h2>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="p-btn" id="btnUserMode" onclick="setMode('user')">دخول البطلة</button>
+                <button class="p-btn" id="btnAdminMode" style="background:#333; color:#fff" onclick="setMode('admin')">الكابتن</button>
+            </div>
+            <input type="text" id="uInp" class="p-input" placeholder="اسم المستخدم">
+            <input type="password" id="pInp" class="p-input" placeholder="كلمة المرور">
+            <button class="p-btn" onclick="core.login()">دخول المنصة</button>
+        </div>
+    </div>
+
+    <div id="mainApp" style="display: none;">
+        <header>
+            <span id="navUserName" style="font-weight: 900; color:var(--p-gold)"></span>
+            <button onclick="location.reload()" class="p-btn" style="width:auto; background:var(--p-danger); color:white; padding:5px 15px;">خروج</button>
+        </header>
+
+        <div class="container">
+            <div id="adminPanel" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px;">
+                    <div class="p-card">
+                        <h3><i class="fas fa-user-plus"></i> بطلة جديدة</h3>
+                        <input type="text" id="mName" class="p-input" placeholder="الاسم">
+                        <input type="tel" id="mPhone" class="p-input" placeholder="رقم الواتساب (مثال: 20123456789)">
+                        <input type="date" id="mStart" class="p-input">
+                        <select id="mGoal" class="p-input">
+                            <option value="تخسيس">هدف: تخسيس</option>
+                            <option value="زيادة وزن">هدف: زيادة وزن</option>
+                            <option value="تأهيل">هدف: تأهيل وإصابة</option>
+                        </select>
+                        <input type="number" id="mCalories" class="p-input" placeholder="السعرات المحددة">
+                        <select id="mDuration" class="p-input">
+                            <option value="1">شهر</option><option value="3">3 أشهر</option><option value="6">6 أشهر</option><option value="12">سنة</option>
+                        </select>
+                        <button class="p-btn" onclick="admin.register()">تفعيل الاشتراك</button>
+                    </div>
+                    <div class="p-card">
+                        <h3>إدارة المشتركات</h3>
+                        <table style="font-size: 0.85rem;">
+                            <thead><tr><th>البطلة</th><th>الهدف</th><th>إرسال البيانات</th><th>القياسات</th><th>شات</th><th>إجراءات</th></tr></thead>
+                            <tbody id="adminTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="userPanel" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+                    <div>
+                        <div class="p-card">
+                            <div class="calories-badge">
+                                <span style="font-size: 0.9rem; color: #aaa;">السعرات اليومية المستهدفة</span>
+                                <div id="userCalories" style="font-size: 2rem; color: var(--p-success); font-weight: 900;">0</div>
+                            </div>
+                            <h3 style="color:var(--p-gold); margin-bottom:5px;"><i class="fas fa-utensils"></i> برنامجي الغذائي</h3>
+                            <div id="dietDisplay" class="diet-box"></div>
+                        </div>
+
+                        <div class="p-card">
+                            <div id="rankBadgeArea"></div>
+                            <h3 style="color:var(--p-gold)"><i class="fas fa-ruler-combined"></i> تحديث قياساتي الحيوية</h3>
+                            <div class="measure-grid">
+                                <img src="p_3653sbemj0.png" class="measure-img">
+                                <div class="measure-inputs">
+                                    <input type="number" id="u_ms_w" class="p-input" placeholder="الوزن">
+                                    <input type="number" id="u_ms_ch" class="p-input" placeholder="الصدر">
+                                    <input type="number" id="u_ms_wa" class="p-input" placeholder="الخصر">
+                                    <input type="number" id="u_ms_hi" class="p-input" placeholder="الأرداف">
+                                    <input type="number" id="u_ms_ar" class="p-input" placeholder="الذراع">
+                                    <input type="number" id="u_ms_th" class="p-input" placeholder="الفخذ">
+                                    <input type="number" id="u_ms_ne" class="p-input" placeholder="الرقبة">
+                                    <button class="p-btn" onclick="user.saveMeasures()">حفظ القياسات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="p-card" style="text-align:center">
+                            <h2 id="uPoints" style="color:var(--p-gold); margin:0; font-size:3rem">0</h2><small>نقطة ولاء</small>
+                        </div>
+                        <div class="p-card">
+                            <h3>شات الكابتن</h3>
+                            <div id="userChatBox" class="chat-area"></div>
+                            <div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="userMsg" class="p-input" style="margin:0"><button class="p-btn" style="width:60px" onclick="user.send()"><i class="fas fa-paper-plane"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>تعديل بيانات المشتركة</h3>
+            <input type="text" id="editName" class="p-input" placeholder="الاسم">
+            <select id="editGoal" class="p-input">
+                <option value="تخسيس">تخسيس</option>
+                <option value="زيادة وزن">زيادة وزن</option>
+                <option value="تأهيل">تأهيل وإصابة</option>
+            </select>
+            <input type="number" id="editCalories" class="p-input" placeholder="السعرات">
+            <input type="tel" id="editPhone" class="p-input" placeholder="واتساب">
+            <input type="date" id="editStart" class="p-input">
+            <select id="editMonths" class="p-input">
+                <option value="1">1 شهر</option><option value="3">3 أشهر</option><option value="6">6 أشهر</option><option value="12">سنة</option>
+            </select>
+            <button class="p-btn" onclick="admin.saveEdit()">حفظ</button>
+            <button class="p-btn" style="background:#444; margin-top:10px" onclick="closeModal('editModal')">إلغاء</button>
+        </div>
+    </div>
+
+    <div id="adminMeasureModal" class="modal"><div class="modal-content"><h3>تحديث قياسات: <span id="targetName"></span></h3><div class="measure-grid"><img src="p_3653sbemj0.png" class="measure-img"><div class="measure-inputs"><input type="number" id="adm_ms_w" class="p-input" placeholder="الوزن"><input type="number" id="adm_ms_wa" class="p-input" placeholder="الخصر"><input type="number" id="adm_ms_hi" class="p-input" placeholder="الأرداف"><input type="number" id="adm_ms_ch" class="p-input" placeholder="الصدر"><input type="number" id="adm_ms_ar" class="p-input" placeholder="الذراع"><input type="number" id="adm_ms_th" class="p-input" placeholder="الفخذ"><input type="number" id="adm_ms_ne" class="p-input" placeholder="الرقبة"><button class="p-btn" onclick="admin.saveMeasures()">تحديث</button></div></div><button class="p-btn" style="background:#444; margin-top:10px" onclick="closeModal('adminMeasureModal')">إغلاق</button></div></div>
+    <div id="adminChatModal" class="modal"><div class="modal-content"><div id="adminChatBox" class="chat-area"></div><div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="adminMsgInp" class="p-input" style="margin:0"><button class="p-btn" style="width:70px" onclick="admin.sendReply()">رد</button><button class="p-btn" style="width:50px; background:var(--p-danger)" onclick="closeModal('adminChatModal')">X</button></div></div></div>
+
+<script>
+    // الملاحظة رقم 3: تسجيل الـ Service Worker لضمان عمل الـ PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker Registered'))
+                .catch(err => console.log('Service Worker Registration Failed', err));
+        });
+    }
+
+    let mode = 'user';
+    function setMode(m) { mode = m; document.getElementById('btnUserMode').style.background = m === 'user' ? '#d4af37' : '#333'; document.getElementById('btnAdminMode').style.background = m === 'admin' ? '#d4af37' : '#333'; }
+
+    const core = {
+        db: JSON.parse(localStorage.getItem('pg_v15_pro')) || [],
+        activeId: null,
+        login: function() {
+            const u = document.getElementById('uInp').value, p = document.getElementById('pInp').value;
+            if(mode === 'admin' && p === 'cap123') this.showUI('admin', {name:'الكابتن رحاب'});
+            else {
+                const m = this.db.find(x => x.user === u && x.pass === p);
+                if(m) { this.activeId = m.id; this.showUI('user', m); } else alert('بيانات خاطئة');
+            }
+        },
+        showUI: function(role, data) {
+            document.getElementById('loginPage').style.display='none';
+            document.getElementById('mainApp').style.display='block';
+            document.getElementById('navUserName').innerText = data.name;
+            if(role === 'admin') { document.getElementById('adminPanel').style.display='block'; admin.render(); }
+            else { document.getElementById('userPanel').style.display='block'; user.render(); }
+        }
+    };
+
+    const admin = {
+        register: function() {
+            const name = document.getElementById('mName').value, phone = document.getElementById('mPhone').value, 
+                  start = document.getElementById('mStart').value, months = parseInt(document.getElementById('mDuration').value),
+                  goal = document.getElementById('mGoal').value, calories = document.getElementById('mCalories').value || 0;
+            if(!name || !start || !phone) return alert('أكمل البيانات (الاسم، الهاتف، التاريخ)');
+            const end = new Date(new Date(start).setMonth(new Date(start).getMonth() + months)).toISOString().split('T')[0];
+            const m = {
+                id: Date.now(), name, phone, start, end, months, goal, calories, points: 0, chat: [], measures: [], unread: false,
+                user: 'pg' + Math.floor(100+Math.random()*899), pass: Math.floor(1000+Math.random()*9000).toString()
+            };
+            core.db.push(m); this.save(); this.render();
+            alert(`بطلة جديدة! المستخدم: ${m.user}`);
+        },
+        render: function() {
+            const tbody = document.getElementById('adminTable'); tbody.innerHTML = '';
+            core.db.forEach(m => {
+                tbody.innerHTML += `<tr>
+                    <td>${m.name}</td><td>${m.goal}</td>
+                    <td><button class="wa-btn" onclick="admin.sendToWA(${m.id})"><i class="fab fa-whatsapp"></i> إرسال</button></td>
+                    <td><button class="p-btn" style="padding:4px" onclick="admin.openMeasures(${m.id})">📏</button></td>
+                    <td><button class="p-btn" style="padding:4px; background:${m.unread?'var(--p-danger)':'#0088ff'}" onclick="admin.openChat(${m.id})">💬</button></td>
+                    <td><div style="display:flex; gap:5px; justify-content:center"><i class="fas fa-edit" style="color:var(--p-success); cursor:pointer" onclick="admin.editMember(${m.id})"></i><i class="fas fa-trash" style="color:var(--p-danger); cursor:pointer" onclick="admin.deleteMember(${m.id})"></i></div></td>
+                </tr>`;
+            });
+        },
+        sendToWA: function(id) {
+            const m = core.db.find(x => x.id == id);
+            const msg = `أهلاً بكِ يا بطلة ${m.name} في Power Gym 💪%0A%0Aإليكِ بيانات دخولك للمنصة:%0A👤 المستخدم: ${m.user}%0A🔑 كلمة المرور: ${m.pass}%0A%0Aرابط المنصة:%0A${window.location.href}`;
+            window.open(`https://wa.me/${m.phone}?text=${msg}`, '_blank');
+        },
+        save: function() { localStorage.setItem('pg_v15_pro', JSON.stringify(core.db)); },
+        deleteMember: function(id) { if(confirm('حذف؟')) { core.db = core.db.filter(x=>x.id!==id); this.save(); this.render(); } },
+        editMember: function(id) { 
+            core.activeId = id; const m = core.db.find(x=>x.id==id);
+            document.getElementById('editName').value = m.name; document.getElementById('editGoal').value = m.goal;
+            document.getElementById('editCalories').value = m.calories; document.getElementById('editPhone').value = m.phone;
+            document.getElementById('editStart').value = m.start; document.getElementById('editMonths').value = m.months;
+            document.getElementById('editModal').style.display='flex';
+        },
+        saveEdit: function() {
+            const m = core.db.find(x=>x.id==core.activeId);
+            m.name = document.getElementById('editName').value; m.goal = document.getElementById('editGoal').value;
+            m.calories = document.getElementById('editCalories').value; m.phone = document.getElementById('editPhone').value;
+            m.start = document.getElementById('editStart').value; m.months = parseInt(document.getElementById('editMonths').value);
+            m.end = new Date(new Date(m.start).setMonth(new Date(m.start).getMonth() + m.months)).toISOString().split('T')[0];
+            this.save(); this.render(); closeModal('editModal');
+        },
+        openMeasures: function(id) { core.activeId = id; document.getElementById('targetName').innerText = core.db.find(x=>id==id).name; document.getElementById('adminMeasureModal').style.display='flex'; },
+        saveMeasures: function() {
+            const m = core.db.find(x=>x.id==core.activeId);
+            m.measures.push({ w: document.getElementById('adm_ms_w').value, wa: document.getElementById('adm_ms_wa').value, hi: document.getElementById('adm_ms_hi').value, ch: document.getElementById('adm_ms_ch').value, ar: document.getElementById('adm_ms_ar').value, th: document.getElementById('adm_ms_th').value, ne: document.getElementById('adm_ms_ne').value });
+            this.save(); alert('تم التحديث'); closeModal('adminMeasureModal');
+        },
+        openChat: function(id) { core.activeId = id; core.db.find(x=>x.id==id).unread=false; document.getElementById('adminChatModal').style.display='flex'; this.renderChat(); this.save(); },
+        renderChat: function() { document.getElementById('adminChatBox').innerHTML = core.db.find(x=>x.id==core.activeId).chat.map(msg=>`<div class="msg ${msg.s}">${msg.t}</div>`).join(''); },
+        sendReply: function() { const inp = document.getElementById('adminMsgInp'); if(inp.value){ core.db.find(x=>x.id==core.activeId).chat.push({s:'cap', t:inp.value}); this.save(); this.renderChat(); inp.value=''; }}
+    };
+
+    const user = {
+        render: function() {
+            const m = core.db.find(x=>x.id==core.activeId);
+            document.getElementById('uPoints').innerText = m.points;
+            document.getElementById('userCalories').innerText = m.calories || 'لم تحدد بعد';
+            const ra = document.getElementById('rankBadgeArea');
+            if(m.points > 1000) ra.innerHTML = '<span class="rank-badge rank-diamond">بطلة ماسية 💎</span>';
+            else if(m.points > 500) ra.innerHTML = '<span class="rank-badge" style="background:var(--p-gold); color:#000">بطلة ذهبية 🥇</span>';
+            else ra.innerHTML = '<span class="rank-badge" style="background:#cd7f32">بطلة برونزية 🥉</span>';
+            this.renderDiet(m.goal); this.renderChat();
+        },
+        renderDiet: function(goal) {
+            const box = document.getElementById('dietDisplay');
+            let content = "";
+            if(goal === 'تخسيس') content = `<span class="diet-tag">نظام حرق الدهون</span><ul class="diet-list"><li><b>الإفطار:</b> بيض مسلوق + خضار.</li><li><b>الغداء:</b> بروتين مشوي + سلطة + كربوهيدرات بسيطة.</li><li><b>العشاء:</b> زبادي يوناني أو تونة.</li></ul>`;
+            else if(goal === 'زيادة وزن') content = `<span class="diet-tag">نظام الضخامة</span><ul class="diet-list"><li><b>الإفطار:</b> شوفان بالحليب والمكسرات.</li><li><b>الغداء:</b> وجبة متكاملة (بروتين + أرز/مكرونة + دهون صحية).</li><li><b>العشاء:</b> بطاطس وجبن وقريش.</li></ul>`;
+            else content = `<span class="diet-tag" style="background:#f1c40f">نظام التأهيل</span><ul class="diet-list"><li><b>التركيز:</b> مضادات التهاب وأوميجا 3.</li><li><b>البروتين:</b> الحفاظ على الكتلة للاستشفاء.</li></ul>`;
+            box.innerHTML = content;
+        },
+        saveMeasures: function() {
+            const m = core.db.find(x => x.id === core.activeId);
+            m.measures.push({ w: document.getElementById('u_ms_w').value, wa: document.getElementById('u_ms_wa').value, hi: document.getElementById('u_ms_hi').value, ch: document.getElementById('u_ms_ch').value, ar: document.getElementById('u_ms_ar').value, th: document.getElementById('u_ms_th').value, ne: document.getElementById('u_ms_ne').value });
+            m.points += 10; admin.save(); alert('تم الحفظ + 10 نقاط'); this.render();
+        },
+        renderChat: function() { document.getElementById('userChatBox').innerHTML = core.db.find(x=>x.id==core.activeId).chat.map(msg=>`<div class="msg ${msg.s}">${msg.t}</div>`).join(''); },
+        send: function() { const inp = document.getElementById('userMsg'); if(inp.value){ const m=core.db.find(x=>x.id==core.activeId); m.chat.push({s:'user', t:inp.value}); m.unread=true; admin.save(); this.renderChat(); inp.value=''; }}
+    };
+
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+</script>
+</body>
+</html>
